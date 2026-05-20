@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -10,76 +10,47 @@ const SECTION_HEIGHT = 8; // distance between wallpapers in 3D space
 
 function WallpaperPlane({ url, position, index }: { url: string, position: [number, number, number], index: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  
-  // Custom shader for distortion effect
-  const uniforms = useMemo(
-    () => ({
-      uTexture: { value: new THREE.Texture() },
-      uTime: { value: 0 },
-      uMouse: { value: new THREE.Vector2() },
-      uHover: { value: 0 },
-    }),
-    []
-  );
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const [aspect, setAspect] = useState(16 / 9);
 
   useEffect(() => {
     new THREE.TextureLoader().load(url, (loadedTexture) => {
       loadedTexture.needsUpdate = true;
-      if (meshRef.current) {
-        const material = meshRef.current.material as THREE.ShaderMaterial;
-        material.uniforms.uTexture.value = loadedTexture;
+      loadedTexture.colorSpace = THREE.SRGBColorSpace; // Ensure correct colors
+      setTexture(loadedTexture);
+      
+      if (loadedTexture.image) {
+        setAspect(loadedTexture.image.width / loadedTexture.image.height);
       }
     });
   }, [url]);
 
-  const vertexShader = `
-    varying vec2 vUv;
-    uniform float uTime;
-    void main() {
-      vUv = uv;
-      vec3 pos = position;
-      
-      // Subtle bending/wave effect
-      float wave = sin(pos.x * 2.0 + uTime) * 0.1;
-      float wave2 = cos(pos.y * 2.0 + uTime) * 0.1;
-      pos.z += wave + wave2;
-      
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `;
-
-  const fragmentShader = `
-    varying vec2 vUv;
-    uniform sampler2D uTexture;
-    
-    void main() {
-      vec4 texColor = texture2D(uTexture, vUv);
-      gl_FragColor = texColor;
-    }
-  `;
-
   useFrame((state) => {
     if (meshRef.current) {
-      const material = meshRef.current.material as THREE.ShaderMaterial;
-      if (material.uniforms) {
-        material.uniforms.uTime.value = state.clock.elapsedTime;
-      }
+      // Very subtle mouse parallax tilt to make it feel premium but grounded
+      const targetRotationX = (state.pointer.y * Math.PI) / 30;
+      const targetRotationY = (state.pointer.x * Math.PI) / 30;
       
-      // Subtle float animation
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1;
+      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotationX, 0.05);
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotationY, 0.05);
+      
+      // Static vertical position based on index (no sine wave bouncing)
+      meshRef.current.position.y = position[1];
     }
   });
 
-  // Aspect ratio adjustment (assuming standard 16:9 for these images or cover)
-  // Let's use 16:9 aspect ratio: 16 * 0.4 = 6.4, 9 * 0.4 = 3.6
+  // Base height is 4 units. Width is calculated by aspect ratio.
+  const height = 4.5;
+  const width = height * aspect;
+
   return (
     <mesh ref={meshRef} position={position}>
-      <planeGeometry args={[7, 4, 32, 32]} />
-      <shaderMaterial
-        uniforms={uniforms}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-      />
+      <planeGeometry args={[width, height]} />
+      {texture ? (
+        <meshBasicMaterial map={texture} toneMapped={false} />
+      ) : (
+        <meshBasicMaterial color="#0f172a" /> // slate-900 placeholder while loading
+      )}
     </mesh>
   );
 }
