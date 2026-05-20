@@ -27,7 +27,8 @@ function WallpaperPlane({ url, position, index }: { url: string, position: [numb
     }, index * 300); // 300ms delay per index
 
     return () => clearTimeout(timeoutId);
-  }, [url, index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]);
 
   useFrame((state) => {
     if (meshRef.current) {
