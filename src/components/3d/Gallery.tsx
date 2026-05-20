@@ -14,16 +14,20 @@ function WallpaperPlane({ url, position, index }: { url: string, position: [numb
   const [aspect, setAspect] = useState(16 / 9);
 
   useEffect(() => {
-    new THREE.TextureLoader().load(url, (loadedTexture) => {
-      loadedTexture.needsUpdate = true;
-      loadedTexture.colorSpace = THREE.SRGBColorSpace; // Ensure correct colors
-      setTexture(loadedTexture);
-      
-      if (loadedTexture.image) {
-        setAspect(loadedTexture.image.width / loadedTexture.image.height);
-      }
-    });
-  }, [url]);
+    // Stagger texture loading to prevent WebGL Context Loss from simultaneous huge VRAM uploads
+    const timeoutId = setTimeout(() => {
+      new THREE.TextureLoader().load(url, (loadedTexture) => {
+        loadedTexture.colorSpace = THREE.SRGBColorSpace; // Ensure correct colors
+        setTexture(loadedTexture);
+        
+        if (loadedTexture.image) {
+          setAspect(loadedTexture.image.width / loadedTexture.image.height);
+        }
+      });
+    }, index * 300); // 300ms delay per index
+
+    return () => clearTimeout(timeoutId);
+  }, [url, index]);
 
   useFrame((state) => {
     if (meshRef.current) {

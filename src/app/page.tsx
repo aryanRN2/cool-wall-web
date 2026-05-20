@@ -33,13 +33,13 @@ function Section({ wallpaper, index }: { wallpaper: any; index: number }) {
   };
 
   return (
-    <section className="relative h-[150vh] w-full pointer-events-none flex items-center justify-center">
+    <section className="relative h-[100vh] w-full pointer-events-none flex items-center justify-center">
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: index === 0 ? "100px" : "-20%" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="pointer-events-auto absolute bottom-24 flex flex-col items-center justify-center p-8 text-center rounded-3xl bg-slate-950/40 backdrop-blur-md border border-slate-800/50 shadow-2xl"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: false, margin: "-20%" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="pointer-events-auto flex flex-col items-center justify-center p-10 text-center rounded-3xl bg-slate-950/60 backdrop-blur-xl border border-slate-700/50 shadow-2xl"
       >
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-2">
           {wallpaper.title}
