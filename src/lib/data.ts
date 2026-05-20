@@ -1,0 +1,65 @@
+export const wallpapers = [
+  {
+    id: 'coolwalls',
+    title: 'Neon Nights',
+    author: 'CyberPunk Studios',
+    category: 'Cyberpunk',
+    url: '/wallpapers/coolwalls.pc.png',
+  },
+  {
+    id: 'it',
+    title: 'Code Matrix',
+    author: 'Dev Arts',
+    category: 'Abstract',
+    url: '/wallpapers/it.png',
+  },
+  {
+    id: 'japan-tree',
+    title: 'Cherry Blossom',
+    author: 'Zen Designs',
+    category: 'Nature',
+    url: '/wallpapers/japan tree.png',
+  },
+  {
+    id: 'ocean',
+    title: 'Deep Blue',
+    author: 'Marine Pixels',
+    category: 'Nature',
+    url: '/wallpapers/ocean.png',
+  },
+  {
+    id: 'ultrahd',
+    title: 'Ultra Vision',
+    author: '4K Masters',
+    category: 'Abstract',
+    url: '/wallpapers/ultrahd 4k.png',
+  },
+  {
+    id: 'koko',
+    title: 'Koko Vibes',
+    author: 'ArtHouse',
+    category: 'Minimal',
+    url: '/wallpapers/koko text.png',
+  },
+  {
+    id: 'gemini-1',
+    title: 'Generative AI Art 1',
+    author: 'Gemini',
+    category: 'AI',
+    url: '/wallpapers/Gemini_Generated_Image_334sg334sg334sg3.png',
+  },
+  {
+    id: 'gemini-2',
+    title: 'Generative AI Art 2',
+    author: 'Gemini',
+    category: 'AI',
+    url: '/wallpapers/Gemini_Generated_Image_exrzsfexrzsfexrz.png',
+  },
+  {
+    id: 'gemini-3',
+    title: 'Generative AI Art 3',
+    author: 'Gemini',
+    category: 'AI',
+    url: '/wallpapers/Gemini_Generated_Image_ir6d3lir6d3lir6d.png',
+  }
+];
